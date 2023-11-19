@@ -47,4 +47,15 @@ public class BidService : IBidService
             Amount = amount
         });
     }
+
+    public async Task<IEnumerable<Bid>> GetBids()
+    {
+        return await _bidRepository.GetAllAsync();
+    }
+
+    public async Task<IEnumerable<Bid>> GetBids(int auctionId)
+    {
+        IEnumerable<Bid> bids = await GetBids();
+        return bids.Where(b => b.AuctionId == auctionId);
+    }
 }

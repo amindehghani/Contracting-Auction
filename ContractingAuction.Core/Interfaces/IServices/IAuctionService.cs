@@ -9,4 +9,6 @@ public interface IAuctionService
     Task<Auction> CreateAuction(Auction auction);
     Task UpdateAuction(Auction auction);
     Task DeleteAuction(int id);
+
+    Task CloseEndedAuctions();
 }

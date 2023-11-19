@@ -21,4 +21,5 @@ public class Auction : Base
     public AuctionStatus Status { get; set; }
 
     public double CurrentPrice { get; set; }
+    public string? WinnerId { get; set; }
 }

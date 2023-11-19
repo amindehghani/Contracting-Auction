@@ -1,5 +1,6 @@
 using System.Text;
 using ContractingAuction.API.Extensions;
+using ContractingAuction.API.Jobs;
 using ContractingAuction.Infrastructure.Data;
 using ContractingAuction.Infrastructure.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -7,6 +8,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Quartz;
+using Quartz.Impl;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,6 +55,7 @@ builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddHostedService<AuctionCloserService>();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo()
@@ -103,6 +107,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
 
 
 app.Run();
