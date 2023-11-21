@@ -28,9 +28,9 @@ public class AuctionController : ControllerBase
 
     [HttpGet]
     [Route("{id:int}")]
-    public async Task<ActionResult<Auction>> GetAuction(int id)
+    public async Task<ActionResult<AuctionViewModel>> GetAuction(int id)
     {
-        Auction? auction = await _auctionService.GetAuction(id);
+        AuctionViewModel? auction = await _auctionService.GetAuction(id);
         if (auction is null)
         {
             return NotFound();
@@ -41,9 +41,9 @@ public class AuctionController : ControllerBase
 
     [HttpPost]
     [Authorize(Roles = "Admin")]
-    public async Task<ActionResult<Auction>> CreateAuction([FromBody] AuctionDto model)
+    public async Task<ActionResult<AuctionViewModel>> CreateAuction([FromBody] AuctionDto model)
     {
-        Auction auction = await _auctionService.CreateAuction(new Auction()
+        AuctionViewModel auction = await _auctionService.CreateAuction(new Auction()
         {
             Title = model.Title,
             Description = model.Description,

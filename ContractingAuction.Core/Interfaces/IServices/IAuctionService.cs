@@ -6,8 +6,8 @@ namespace ContractingAuction.Core.Interfaces.IServices;
 public interface IAuctionService
 {
     Task<IEnumerable<AuctionViewModel>> GetAuctions();
-    Task<Auction?> GetAuction(int id);
-    Task<Auction> CreateAuction(Auction auction);
+    Task<AuctionViewModel?> GetAuction(int id);
+    Task<AuctionViewModel> CreateAuction(Auction auction);
     Task UpdateAuction(Auction auction);
     Task DeleteAuction(int id);
 

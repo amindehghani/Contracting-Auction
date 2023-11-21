@@ -25,14 +25,15 @@ public class AuctionService : IAuctionService
         return _auctionViewModelMapper.MapList(await _auctionRepository.GetAllAsync());
     }
 
-    public async Task<Auction?> GetAuction(int id)
+    public async Task<AuctionViewModel?> GetAuction(int id)
     {
-        return await _auctionRepository.GetByIdAsync(id);
+        Auction? auction = await _auctionRepository.GetByIdAsync(id);
+        return auction is null ? null : _auctionViewModelMapper.MapModel(auction);
     }
 
-    public async Task<Auction> CreateAuction(Auction auction)
+    public async Task<AuctionViewModel> CreateAuction(Auction auction)
     {
-        return await _auctionRepository.CreateAsync(auction);
+        return _auctionViewModelMapper.MapModel(await _auctionRepository.CreateAsync(auction));
     }
 
     public async Task UpdateAuction(Auction auction)
@@ -42,7 +43,7 @@ public class AuctionService : IAuctionService
 
     public async Task DeleteAuction(int id)
     {
-        Auction? auction = await GetAuction(id);
+        Auction? auction = await _auctionRepository.GetByIdAsync(id);
         if (auction is not null)
         {
             await _auctionRepository.DeleteAsync(auction);
