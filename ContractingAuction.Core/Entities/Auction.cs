@@ -22,4 +22,6 @@ public class Auction : Base
 
     public double CurrentPrice { get; set; }
     public string? WinnerId { get; set; }
+
+    public ICollection<Bid> Bids { get; set; } = new List<Bid>();
 }

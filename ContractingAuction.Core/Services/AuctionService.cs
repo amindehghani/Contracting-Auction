@@ -1,7 +1,9 @@
 using ContractingAuction.Core.Entities;
 using ContractingAuction.Core.Enums;
+using ContractingAuction.Core.Interfaces.IMapper;
 using ContractingAuction.Core.Interfaces.IRepositories;
 using ContractingAuction.Core.Interfaces.IServices;
+using ContractingAuction.Core.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ContractingAuction.Core.Services;
@@ -9,20 +11,18 @@ namespace ContractingAuction.Core.Services;
 public class AuctionService : IAuctionService
 {
     private readonly IAuctionRepository _auctionRepository;
-    private readonly IServiceProvider _serviceProvider;
-    private readonly IBidService _bidService;
+    private readonly IBaseMapper<Auction, AuctionViewModel> _auctionViewModelMapper;
 
     public AuctionService(
         IAuctionRepository auctionRepository,
-        IServiceProvider serviceProvider)
+        IBaseMapper<Auction, AuctionViewModel> auctionViewModelMapper)
     {
         _auctionRepository = auctionRepository;
-        _serviceProvider = serviceProvider;
-        _bidService = serviceProvider.GetService<IBidService>()!;
+        _auctionViewModelMapper = auctionViewModelMapper;
     }
-    public async Task<IEnumerable<Auction>> GetAuctions()
+    public async Task<IEnumerable<AuctionViewModel>> GetAuctions()
     {
-        return await _auctionRepository.GetAllAsync();
+        return _auctionViewModelMapper.MapList(await _auctionRepository.GetAllAsync());
     }
 
     public async Task<Auction?> GetAuction(int id)
@@ -49,24 +49,19 @@ public class AuctionService : IAuctionService
         }
     }
 
-    public async Task CloseEndedAuctions()
+    public async Task<IEnumerable<Auction>> GetEndedAuctions()
     {
-        IEnumerable<Auction> auctions = await _auctionRepository.GetEndedAuctions();
-        foreach (Auction auction in auctions)
-        {
-            Bid? winningBid = await GetWinningBid(auction);
-            if (winningBid is not null)
-            {
-                auction.WinnerId = winningBid.UserId;
-            }
-            auction.Status = AuctionStatus.Ended;
-            await _auctionRepository.UpdateAsync(auction);
-        }
-    }
-
-    private async Task<Bid?> GetWinningBid(Auction auction)
-    {
-    IEnumerable<Bid> auctionBids = await _bidService.GetBids(auction.Id);
-    return auctionBids.MinBy(b => b.Amount) ?? null;
+        return await _auctionRepository.GetEndedAuctions();
+        // foreach (Auction auction in auctions)
+        // {
+            // int l = 0;
+            // Bid? winningBid = await GetWinningBid(auction);
+            // if (winningBid is not null)
+            // {
+            // auction.WinnerId = winningBid.UserId;
+            // }
+            // auction.Status = AuctionStatus.Ended;
+            // await _auctionRepository.UpdateAsync(auction);
+        // }
     }
 }

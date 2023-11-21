@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using ContractingAuction.API.Extensions;
 using ContractingAuction.API.Jobs;
 using ContractingAuction.Infrastructure.Data;
@@ -29,6 +30,8 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
     .AddDefaultTokenProviders();
 
 builder.Services.RegisterService();
+builder.Services.AddHostedService<AuctionCheckerJob>();
+
 
 builder.Services.AddAuthentication(options =>
 {
@@ -51,11 +54,9 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddLogging();
 
 builder.Services.AddControllers();
-
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddHostedService<AuctionCloserService>();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo()

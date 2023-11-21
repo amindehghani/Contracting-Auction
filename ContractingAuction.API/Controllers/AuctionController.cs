@@ -2,6 +2,7 @@ using ContractingAuction.Core.Dtos;
 using ContractingAuction.Core.Entities;
 using ContractingAuction.Core.Enums;
 using ContractingAuction.Core.Interfaces.IServices;
+using ContractingAuction.Core.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Extensions;
@@ -9,6 +10,7 @@ using Microsoft.OpenApi.Extensions;
 namespace ContractingAuction.API.Controllers;
 
 [ApiController]
+[Route("api/[controller]")]
 public class AuctionController : ControllerBase
 {
     private readonly IAuctionService _auctionService;
@@ -19,14 +21,25 @@ public class AuctionController : ControllerBase
         _auctionService = auctionService;
     }
     [HttpGet]
-    [Route("api/[controller]")]
-    public async Task<ActionResult<IEnumerable<Auction>>> GetAuctions()
+    public async Task<ActionResult<IEnumerable<AuctionViewModel>>> GetAuctions()
     {
         return Ok(await _auctionService.GetAuctions());
     }
 
+    [HttpGet]
+    [Route("{id:int}")]
+    public async Task<ActionResult<Auction>> GetAuction(int id)
+    {
+        Auction? auction = await _auctionService.GetAuction(id);
+        if (auction is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(auction);
+    }
+
     [HttpPost]
-    [Route("api/[controller]")]
     [Authorize(Roles = "Admin")]
     public async Task<ActionResult<Auction>> CreateAuction([FromBody] AuctionDto model)
     {

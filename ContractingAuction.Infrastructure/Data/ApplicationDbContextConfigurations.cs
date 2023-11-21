@@ -1,3 +1,4 @@
+using ContractingAuction.Core.Entities;
 using ContractingAuction.Core.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,12 @@ public class ApplicationDbContextConfigurations
     {
         modelBuilder.Entity<IdentityUser>().ToTable("Users");
         modelBuilder.Entity<IdentityRole>().ToTable("Roles");
+
+        modelBuilder.Entity<Auction>()
+            .HasMany(e => e.Bids)
+            .WithOne(e => e.Auction)
+            .HasForeignKey(e => e.AuctionId)
+            .IsRequired();
     }
 
     public static async Task SeedData(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
